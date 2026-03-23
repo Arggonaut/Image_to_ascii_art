@@ -1,0 +1,21 @@
+{
+  "name": "image_to_ascii_art",
+  "version": "1.0.0",
+  "description": "This is a continuation/rewriting of image_to_ascii_art_c but in javascript so that I can later add a gui and turn it into a webapp/website",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arggonaut/Image_to_ascii_art.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Arggonaut/Image_to_ascii_art/issues"
+  },
+  "homepage": "https://github.com/Arggonaut/Image_to_ascii_art#readme"
+}
