@@ -4,22 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Image to Ascii</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <input type="file" id="input" accept="image/*" /> <br>
-    <img id="displayImage" src = "#" /> <br>
+    <div class="container">
+        <!-- <textarea readonly rows="30" cols="64" id="ascii_output"></textarea> -->
+         <canvas id="ascii_canvas"></canvas>
 
-    <label>Scale: </label>
-    <input type="number" min="0" max="10" value = "6" id="scale_input" /> <br>
+        <div class="controls">
+            <input type="file" id="input" accept="image/*" /> <br>
+            <img id="displayImage" src = "#" /> <br>
 
-    <button id="convert_button">Convert</button>
-    <br><br>
+            <label>Scale: </label>
+            <input type="number" min="0" value = "1" id="scale_input" />
+        </div>
+
+    </div>
     
-    <textarea rows="1" cols="1" id="ascii_output" style="font-family: 'Courier New', Courier, monospace;"></textarea>
-
-
-    <img src="#" id="resized_image" hidden/>
-    <canvas id="ascii_canvas" hidden></canvas>
+    <img src="#" id="resized_image" hidden />
     <script src="script.js"> </script>
 </body>
 </html>

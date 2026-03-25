@@ -1,0 +1,21 @@
+body {
+    background-color: black;
+    
+}
+
+.container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+#ascii_output {
+    font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+    color: white;
+    background-color: #202020;
+}
+
+.controls > label {
+    color: white;
+}

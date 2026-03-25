@@ -1,18 +1,89 @@
-const DENSITY_CHARS = "_.=+:;!?c71236089$W#@"; //a string of chars ordered by how bright they are
-const DENSITY_CHAR_RANGE = 255 / (DENSITY_CHARS.length - 1); //how many brightness values each char accounts for
-                                                             //255 is the max 
+const canvas = document.getElementById("ascii_canvas");
+const context = canvas.getContext("2d", { willReadFrequently: true });
+const input = document.getElementById("input"); 
+const input_image = document.createElement("img");
+const scale_input = document.getElementById("scale_input");
 
-let input = document.getElementById("input"); 
-let input_image = document.createElement("img");
-let display = document.getElementById("displayImage");
-let scale_input = document.getElementById("scale_input");
-let scale = scale_input.valueAsNumber;
-let convert_button = document.getElementById("convert_button");
-let resized_image = document.getElementById("resized_image");
-let ascii_canvas = document.getElementById("ascii_canvas");
-let ascii_text_area = document.getElementById("ascii_output");
+class Cell {
+    constructor(x, y, char, color) {
+        this.x = x;
+        this.y = y;
+        this.char = char;
+        this.color = color;
+    }
 
-let height_to_width_ratio = 1;
+    draw(context) {
+        context.fillStyle = this.color;
+        context.fillText(this.char, this.x, this.y);
+    }
+}
+
+class Convert_To_Ascii {
+    #image_cell_array = [];
+    #pixels = [];
+    #context;
+    #width;
+    #height;
+    #text_verson = "";
+    #MAX_COLOR_VALUE = 255;
+    #density_array =  "_.=+:;!c71236089$W#@";
+    #density_char_range = parseInt(this.#MAX_COLOR_VALUE / (this.#density_array.length - 1));
+
+    constructor(context, width, height) {
+        this.#context = context;
+        this.#width = width;
+        this.#height = height;
+        this.#context.drawImage(input_image, 0, 0, this.#width, this.#height);
+        this.#pixels = this.#context.getImageData(0, 0, this.#width, this.#height);
+    }
+
+    #brightness_to_char(brightness) {
+        const density_index = parseInt(brightness / this.#density_char_range);
+        return this.#density_array[density_index];
+    }
+
+    #scan_image(cell_size) {
+        this.#image_cell_array = [];
+        for (let y = 0; y < this.#height; y += cell_size) {
+            for (let x = 0; x < this.#width; x += cell_size) {
+                const x_postition = x * 4;
+                const y_postition = y * 4;
+                const pixel_index = (y_postition * this.#width) + x_postition;
+
+                if (this.#pixels.data[pixel_index + 3] > (this.#MAX_COLOR_VALUE / 2)) {
+                    const red = this.#pixels.data[pixel_index];
+                    const green = this.#pixels.data[pixel_index + 1];
+                    const blue = this.#pixels.data[pixel_index + 2];
+                    const color = "rgb(" + red + "," + green + "," + blue + ")";
+                    const brightness = (red + green + blue) / 3;
+                    const density_char = this.#brightness_to_char(brightness);
+
+                    this.#text_verson.concat(density_char);
+                    this.#image_cell_array.push(new Cell(x, y, density_char, color));
+                }
+            }
+            this.#text_verson.concat("\n");
+        }
+    }
+
+    #draw_ascii() {
+        this.#context.clearRect(0, 0, this.#width, this.#height);
+        for (let i = 0; i < this.#image_cell_array.length; i++) {
+            this.#image_cell_array[i].draw(this.#context);
+        }
+    }
+
+    draw(cell_size) {
+        this.#scan_image(cell_size);
+        console.log(this.#image_cell_array);
+        this.#draw_ascii();
+    }
+    
+}
+
+scale_input.addEventListener("change", (event) => {
+    ascii.draw(scale_input.valueAsNumber);
+})
 
 input.addEventListener("change", (event) => {
     let image_file = event.target.files[0];
@@ -20,85 +91,16 @@ input.addEventListener("change", (event) => {
     reader.readAsDataURL(image_file);
 
     reader.onload = (event) => {
-        let image_URL = event.target.result
+        let image_URL = event.target.result;
         input_image.src = image_URL;
-        console.log("Image recieved with width: " + input_image.width + " and height: " + input_image.height);
-
-        height_to_width_ratio = input_image.height / input_image.width;
-        const DISPLAY_WIDTH = 128;
-
-        let displayURL = resizeImage(input_image, DISPLAY_WIDTH, DISPLAY_WIDTH * height_to_width_ratio);
-        display.src = displayURL;   
     }
 })
 
-scale_input.addEventListener("change", (event) => {
-    scale = scale_input.valueAsNumber;
-})
-
-convert_button.addEventListener("click", (event) => {
-
-    let resized_width = 2 ** scale;
-    let resized_height = resized_width * height_to_width_ratio / 2;
-
-    ascii_text_area.cols = resized_width;
-    ascii_text_area.rows = resized_height;
-
-    let resizedURL = resizeImage(input_image, resized_width, resized_height);
-    resized_image.src = resizedURL;
-    
-    let ascii_canvas_context = ascii_canvas.getContext("2d"); 
-    ascii_canvas.width = resized_image.width; 
-    ascii_canvas.height = resized_image.height;
-    ascii_canvas_context.drawImage(resized_image, 0, 0, resized_image.width, resized_image.height); 
-    const imageData = ascii_canvas_context.getImageData(0, 0, resized_image.width, resized_image.height); //get imageData of the image
-
-    let pixel = imageData.data; //get an array of the pixel data
-    let ascii = ""; //declare the output string
-    for (let i = 0, column = 0, row = 1; i < pixel.length; i+=4) { //loop through each pixel
-        let brightness = parseInt((pixel[i] + pixel[i + 1] + pixel[i + 3]) / 3); //average the rgb to get the brightness
-        let densityIndex = parseInt(brightness / DENSITY_CHAR_RANGE); //find the index for the density char for the brightness level
-        ascii = ascii.concat(DENSITY_CHARS.charAt(densityIndex)); //concatinate the corrosponding density char to the ascii string
-
-
-        if (column == (resized_image.width - 1)) { //if we reached the end of the row of pixels
-            console.log(row);
-            row++;
-            ascii = ascii.concat("\n"); //concatinate a linebreak
-            column = 0; //set column to zero - start of new row
-        }
-        else {
-            column++; //move on to the next column of the row
-        }
-    }
-    ascii_text_area.textContent = ascii;
-
-
-})
-
-   
-   
-
-
-
-
-
-
-
-
-
-
-function resizeImage(input, width, height) {
-    const newCanvas = document.createElement("canvas");
-    // newCanvas.style = "display: none";
-    newCanvas.width = width;
-    newCanvas.height = height;
-    const newContext = newCanvas.getContext("2d");
-
-    newContext.drawImage(input, 0, 0, width, height);
-    return newCanvas.toDataURL();
+let ascii;
+input_image.onload = function initialize(){
+    console.log("Image recieved with width: " + input_image.width + " and height: " + input_image.height);
+    canvas.width = input_image.width;
+    canvas.height = input_image.height;
+    ascii = new Convert_To_Ascii(context, input_image.width, input_image.height);
+    ascii.draw(10);
 }
-
-
-
-
