@@ -10,14 +10,21 @@ body {
     transform: translate(-50%, -50%);
 }
 
-#ascii_canvas {
-    border: 5px solid white;
+.displays {
+    display: flex;
 }
 
-#ascii_output {
+#ascii_canvas {
+    border: 3px solid white;
+}
+
+#ascii_text{
     font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
-    color: white;
+    width: 512px;
+    height: 512px;
     background-color: #202020;
+    color: white;
+    
 }
 
 .controls > label {

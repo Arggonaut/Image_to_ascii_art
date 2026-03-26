@@ -1,5 +1,6 @@
 const canvas = document.getElementById("ascii_canvas");
 const context = canvas.getContext("2d");
+const output_div = document.getElementById("ascii_text");
 const input = document.getElementById("input"); 
 const input_image = document.createElement("img");
 const scale_input = document.getElementById("scale_input");
@@ -58,11 +59,15 @@ class Convert_To_Ascii {
                     const brightness = (red + green + blue) / 3;
                     const density_char = this.#brightness_to_char(brightness);
 
-                    this.#text_verson.concat(density_char);
                     this.#image_cell_array.push(new Cell(x, y, density_char, color));
+                    if (y % 2 == 0) {
+                        this.#text_verson = this.#text_verson.concat(density_char);
+                    }
                 }
             }
-            this.#text_verson.concat("\n");
+            if(y % 2 == 0) {
+                this.#text_verson = this.#text_verson.concat("\n");
+            }
         }
     }
 
@@ -74,21 +79,18 @@ class Convert_To_Ascii {
     }
 
     draw(cell_size) {
-        if (cell_size == 1) {
-            this.#context.drawImage(input_image, 0, 0, this.#width, this.#height);
-        }
-        else {
-            this.#scan_image(cell_size);
-            console.log(this.#image_cell_array);
-            this.#draw_ascii();
-        }
+        this.#text_verson = "";
+        this.#scan_image(cell_size);
+        output_div.textContent = this.#text_verson;
+        this.#draw_ascii();
 
     }
     
 }
 
 scale_input.addEventListener("change", (event) => {
-    ascii.draw(scale_input.valueAsNumber);
+    const scale = (2 * scale_input.valueAsNumber) - 1
+    ascii.draw(scale);
 })
 
 input.addEventListener("change", (event) => {
@@ -108,6 +110,8 @@ input_image.onload = function initialize(){
     let height_to_width_ratio = input_image.height / input_image.width
     canvas.width = 512;
     canvas.height = parseInt(height_to_width_ratio * canvas.width);
+    output_div.style.height = canvas.height;
+
     ascii = new Convert_To_Ascii(context, canvas.width, canvas.height);
-    ascii.draw(scale_input.valueAsNumber);
+    ascii.draw(1);
 }

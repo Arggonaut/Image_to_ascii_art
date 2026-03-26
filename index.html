@@ -8,13 +8,16 @@
 </head>
 <body>
     <div class="container">
-        <!-- <textarea readonly rows="30" cols="64" id="ascii_output"></textarea> -->
-         <canvas id="ascii_canvas"></canvas>
+        <div class="displays">
+            <canvas id="ascii_canvas" width="512" height="512"></canvas>
+            <div id="ascii_text"></div> 
+        </div>
+        
 
         <div class="controls">
             <input type="file" id="input" accept="image/*" /> <br>
             <label>Scale: </label>
-            <input type="number" min="1" value = "2" id="scale_input" />
+            <input type="number" min="1" max="10" value = "1" id="scale_input" />
         </div>
 
     </div>
