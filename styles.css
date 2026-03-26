@@ -12,6 +12,7 @@ body {
 
 .displays {
     display: flex;
+    gap: 20px;
 }
 
 #ascii_canvas {
@@ -24,7 +25,7 @@ body {
     height: 512px;
     background-color: #202020;
     color: white;
-    
+    overflow: hidden;
 }
 
 .controls > label {
