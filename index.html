@@ -10,18 +10,21 @@
     <div class="container">
         <div class="displays">
             <canvas id="ascii_canvas" width="512" height="512"></canvas>
-            <div id="ascii_text"></div> 
+            <div id="ascii_div">
+                <p id="ascii_text"></p>
+            </div> 
         </div>
         
 
         <div class="controls">
             <input type="file" id="input" accept="image/*" /> <br>
             <label>Scale: </label>
-            <input type="number" min="1" max="10" value = "1" id="scale_input" />
+            <input type="range" min="1" max="10" value = "1" id="scale_input" />
         </div>
 
     </div>
-    
+   
+
     <script src="script.js"> </script>
 </body>
 </html>
