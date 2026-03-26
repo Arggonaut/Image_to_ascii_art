@@ -1,6 +1,7 @@
 const canvas = document.getElementById("ascii_canvas");
 const context = canvas.getContext("2d");
-const output_div = document.getElementById("ascii_text");
+const output_div = document.getElementById("ascii_div");
+const ascii_text = document.getElementById("ascii_text");
 const input = document.getElementById("input"); 
 const input_image = document.createElement("img");
 const scale_input = document.getElementById("scale_input");
@@ -38,6 +39,22 @@ class Convert_To_Ascii {
         this.#pixels = this.#context.getImageData(0, 0, this.#width, this.#height);
     }
 
+    #fit_text() {
+        let font_size = 20;
+        ascii_text.style.fontSize = font_size + "px";
+
+        //scale the font size until it matches or is just over
+        while (ascii_text.scrollWidth < output_div.clientWidth) {
+            font_size++;
+            ascii_text.style.fontSize = font_size + "px";
+        }
+
+        //if it overshoots, scale it down
+        while (ascii_text.scrollWidth > output_div.clientWidth) {
+            font_size--;
+            ascii_text.style.fontSize = font_size + "px";
+        }
+    }
     #brightness_to_char(brightness) {
         const density_index = parseInt(brightness / this.#density_char_range);
         return this.#density_array[density_index];
@@ -81,9 +98,10 @@ class Convert_To_Ascii {
     draw(cell_size) {
         this.#text_verson = "";
         this.#scan_image(cell_size);
-        output_div.textContent = this.#text_verson;
+        ascii_text.textContent = this.#text_verson;
+        this.#fit_text();
+        console.log(ascii_text.scrollWidth);
         this.#draw_ascii();
-
     }
     
 }
@@ -110,6 +128,8 @@ input_image.onload = function initialize(){
     let height_to_width_ratio = input_image.height / input_image.width
     canvas.width = 512;
     canvas.height = parseInt(height_to_width_ratio * canvas.width);
+
+    console.log(canvas.width + " | " + canvas.height);
     output_div.style.height = canvas.height;
 
     ascii = new Convert_To_Ascii(context, canvas.width, canvas.height);
