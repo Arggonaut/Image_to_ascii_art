@@ -1,5 +1,5 @@
 const canvas = document.getElementById("ascii_canvas");
-const context = canvas.getContext("2d", { willReadFrequently: true });
+const context = canvas.getContext("2d");
 const input = document.getElementById("input"); 
 const input_image = document.createElement("img");
 const scale_input = document.getElementById("scale_input");
@@ -74,9 +74,15 @@ class Convert_To_Ascii {
     }
 
     draw(cell_size) {
-        this.#scan_image(cell_size);
-        console.log(this.#image_cell_array);
-        this.#draw_ascii();
+        if (cell_size == 1) {
+            this.#context.drawImage(input_image, 0, 0, this.#width, this.#height);
+        }
+        else {
+            this.#scan_image(cell_size);
+            console.log(this.#image_cell_array);
+            this.#draw_ascii();
+        }
+
     }
     
 }
@@ -99,8 +105,9 @@ input.addEventListener("change", (event) => {
 let ascii;
 input_image.onload = function initialize(){
     console.log("Image recieved with width: " + input_image.width + " and height: " + input_image.height);
-    canvas.width = input_image.width;
-    canvas.height = input_image.height;
-    ascii = new Convert_To_Ascii(context, input_image.width, input_image.height);
-    ascii.draw(10);
+    let height_to_width_ratio = input_image.height / input_image.width
+    canvas.width = 512;
+    canvas.height = parseInt(height_to_width_ratio * canvas.width);
+    ascii = new Convert_To_Ascii(context, canvas.width, canvas.height);
+    ascii.draw(scale_input.valueAsNumber);
 }
