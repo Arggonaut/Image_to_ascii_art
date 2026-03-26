@@ -10,6 +10,10 @@ body {
     transform: translate(-50%, -50%);
 }
 
+#ascii_canvas {
+    border: 5px solid white;
+}
+
 #ascii_output {
     font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
     color: white;
