@@ -14,7 +14,7 @@ class Cell {
         this.color = color;
     }
 
-    draw(context) {
+    draw(context) { //draw the character at the cell's position
         context.fillStyle = this.color;
         context.fillText(this.char, this.x, this.y);
     }
@@ -39,7 +39,7 @@ class Convert_To_Ascii {
         this.#pixels = this.#context.getImageData(0, 0, this.#width, this.#height);
     }
 
-    #fit_text() {
+    #fit_text() { //fit the text output inside of the output_div
         let font_size = 20;
         ascii_text.style.fontSize = font_size + "px";
 
@@ -55,16 +55,16 @@ class Convert_To_Ascii {
             ascii_text.style.fontSize = font_size + "px";
         }
     }
-    #brightness_to_char(brightness) {
+    #brightness_to_char(brightness) { //map the brightness value to a density char and return that char
         const density_index = parseInt(brightness / this.#density_char_range);
         return this.#density_array[density_index];
     }
 
-    #scan_image(cell_size) {
+    #scan_image(cell_size) { //traverse through each pixel and assign a density char
         this.#image_cell_array = [];
-        for (let y = 0; y < this.#height; y += cell_size) {
-            for (let x = 0; x < this.#width; x += cell_size) {
-                const x_postition = x * 4;
+        for (let y = 0; y < this.#height; y += cell_size) { //traverse through each row
+            for (let x = 0; x < this.#width; x += cell_size) { //traverse through each column
+                const x_postition = x * 4; //each pixel has 4 indexes in the array
                 const y_postition = y * 4;
                 const pixel_index = (y_postition * this.#width) + x_postition;
 
@@ -77,8 +77,13 @@ class Convert_To_Ascii {
                     const density_char = this.#brightness_to_char(brightness);
 
                     this.#image_cell_array.push(new Cell(x, y, density_char, color));
-                    if (y % 2 == 0) {
+                    if (y % 2 == 0) { //font is about twice as tall as it is wide so only add every other row
                         this.#text_verson = this.#text_verson.concat(density_char);
+                    }
+                }
+                else {
+                    if (y % 2 == 0) {
+                        this.#text_verson = this.#text_verson.concat(" ");
                     }
                 }
             }
@@ -88,14 +93,14 @@ class Convert_To_Ascii {
         }
     }
 
-    #draw_ascii() {
+    #draw_ascii() {//traverse each cell in the cell_array and use their draw method
         this.#context.clearRect(0, 0, this.#width, this.#height);
         for (let i = 0; i < this.#image_cell_array.length; i++) {
             this.#image_cell_array[i].draw(this.#context);
         }
     }
 
-    draw(cell_size) {
+    draw(cell_size) {//set up and draw the outputs
         this.#text_verson = "";
         this.#scan_image(cell_size);
         ascii_text.textContent = this.#text_verson;
@@ -107,11 +112,11 @@ class Convert_To_Ascii {
 }
 
 scale_input.addEventListener("change", (event) => {
-    const scale = (2 * scale_input.valueAsNumber) - 1
+    const scale = (2 * scale_input.valueAsNumber) - 1;
     ascii.draw(scale);
 })
 
-input.addEventListener("change", (event) => {
+input.addEventListener("change", (event) => { //load the uploaded image
     let image_file = event.target.files[0];
     let reader = new FileReader();
     reader.readAsDataURL(image_file);
