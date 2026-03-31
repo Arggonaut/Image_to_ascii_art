@@ -7,7 +7,7 @@ There are two outputs. The left one is based on drawing the symbols with a canva
 
 Features that I am figuring out: <br>
 1. Text based:
-    1. better font size scaling
+    1. ~~ better font size scaling ~~
     2. an option for color
     3. edge detection
     
