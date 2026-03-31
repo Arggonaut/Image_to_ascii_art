@@ -19,18 +19,16 @@ body {
     border: 3px solid white;
 }
 
-
 #ascii_text{
     font-family: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
     width: 512px;
     height: 512px;
     background-color: #202020;
-    font-optical-sizing: auto;
-    font-size: calc(167cqw / var(--character-count));
     margin: 0;
     text-align: center;
     color: white;
     overflow: hidden;
+    white-space: pre;
 }
 
 .controls > label {
