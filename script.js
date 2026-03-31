@@ -40,21 +40,17 @@ class Convert_To_Ascii {
     }
 
     #fit_text() { //fit the text output inside of the output_div
-        let font_size = 20;
+        
+        //find the how many charcters wide the ascii output is
+        const lines = ascii_text.textContent.split("\n");
+        const line_width = lines[0].length;
+
+        //find the font size to fill the output div
+        const WIDTH_TO_HEIGHT_RATIO = 0.6; //The font is about 0.6 times as wide as it is tall
+        const font_size = output_div.clientWidth / (line_width * WIDTH_TO_HEIGHT_RATIO);
         ascii_text.style.fontSize = font_size + "px";
-
-        //scale the font size until it matches or is just over
-        while (ascii_text.scrollWidth < output_div.clientWidth) {
-            font_size++;
-            ascii_text.style.fontSize = font_size + "px";
-        }
-
-        //if it overshoots, scale it down
-        while (ascii_text.scrollWidth > output_div.clientWidth) {
-            font_size--;
-            ascii_text.style.fontSize = font_size + "px";
-        }
     }
+    
     #brightness_to_char(brightness) { //map the brightness value to a density char and return that char
         const density_index = parseInt(brightness / this.#density_char_range);
         return this.#density_array[density_index];
